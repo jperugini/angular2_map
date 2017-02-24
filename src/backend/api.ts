@@ -1,5 +1,7 @@
 var util = require('util');
 var {Router} = require('express');
+import * as path from 'path';
+var mv = require('mv');
 
 // Our API for demos only
 import {fakeDataBase} from './db';
@@ -101,6 +103,23 @@ export function createTodoApi() {
 
       res.json(req.todo);
     });
+
+    router.route('/upload')
+      .post(function(req, res) {
+        var file = req.files.file;
+        var tempPath = file.path;
+        var path =  'public' + '/res' + '/' + file.name;
+        console.log(path);
+
+        mv(tempPath, path, function(err) {
+            console.log(err);
+            if (err){
+                res.send(500);
+            }else{
+                res.send(200);
+            }
+    });
+})
 
   return router;
 };
