@@ -32,7 +32,6 @@ nav a:hover {
     min-height: 500px;
     display: block;
     padding: 20px;
-    background: url('/assets/logo.png') no-repeat center center;
 }
 
 .inner-hero {
@@ -46,7 +45,7 @@ nav a:hover {
 }
 
 main {
-    padding: 20px 0;
+    padding: 0 0;
 }
 
 pre {

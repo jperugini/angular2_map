@@ -104,22 +104,30 @@ export function createTodoApi() {
       res.json(req.todo);
     });
 
-    router.route('/upload')
-      .post(function(req, res) {
-        var file = req.files.file;
-        var tempPath = file.path;
-        var path =  'public' + '/res' + '/' + file.name;
-        console.log(path);
+  return router;
+};
 
-        mv(tempPath, path, function(err) {
-            console.log(err);
-            if (err){
-                res.send(500);
-            }else{
-                res.send(200);
-            }
+export function uploadJson() {
+
+  var router = Router()
+  var multer = require('multer');
+  var fs = require('fs')
+
+  var DIR = './uploads/';
+
+  router.route('/upload')
+    .post(multer({dest: "./uploads/"}).single("uploads"), function(req, res) {
+      if(req['file'].originalname.endsWith('.json')) {
+        fs.readFile(req['file'].path, 'utf8', function (err, data) {
+          if (err) {
+            res.status(500).send('Upload failed');
+          }
+          res.status(200).json(data);
+        });
+      } else {
+        res.status(500).send('Upload must be json file');
+      }
     });
-})
 
   return router;
 };

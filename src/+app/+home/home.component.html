@@ -1,6 +1,6 @@
 <div class="home">
-  Home component
-  <strong>Async data call return value:</strong>
-  <pre>{{ data | json }}</pre>
-  <blockquote>{{ data.data }}</blockquote>
+  <div *ngIf="error" [innerHTML]="error" class="error"></div>
+  <input type="file" (change)="fileChangeEvent($event)" placeholder="Upload file..." accept=".json" />
+  <button type="button" (click)="upload()">Upload</button>
+  <pre *ngIf="uploadedJsonFile">{{ uploadedJsonFile | json }}</pre>
 </div>

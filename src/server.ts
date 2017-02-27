@@ -64,10 +64,12 @@ app.use(cacheControl, express.static(path.join(ROOT, 'dist/client'), {index: fal
 /////////////////////////
 // ** Example API
 // Notice API should be in aseparate process
-import { serverApi, createTodoApi } from './backend/api';
+import { serverApi, createTodoApi, uploadJson } from './backend/api';
 // Our API for demos only
 app.get('/data.json', serverApi);
 app.use('/api', createTodoApi());
+// Upload api
+app.use('/api', uploadJson());
 
 process.on('uncaughtException', function (err) { 
   console.error('Catching uncaught errors to avoid process crash', err);
