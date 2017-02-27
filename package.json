@@ -51,6 +51,7 @@
     "@angularclass/bootloader": "~1.0.1",
     "@angularclass/idle-preload": "~1.0.4",
     "angular2-express-engine": "~2.1.0-rc.1",
+    "angular2-google-maps": "^0.17.0",
     "angular2-platform-node": "~2.1.0-rc.1",
     "angular2-universal": "~2.1.0-rc.1",
     "angular2-universal-polyfills": "~2.1.0-rc.1",
