@@ -4,8 +4,8 @@ import * as path from 'path';
 var mv = require('mv');
 
 // Our API for demos only
-import {fakeDataBase} from './db';
-import {fakeDemoRedisCache} from './cache';
+import { fakeDataBase } from './db';
+import { fakeDemoRedisCache } from './cache';
 
 // you would use cookies/token etc
 var USER_ID = 'f9d98cf1-1b96-464e-8755-bcc2a5c09077'; // hardcoded as an example
@@ -34,9 +34,9 @@ export function serverApi(req, res) {
 var COUNT = 4;
 var TODOS = [
   { id: 0, value: 'finish example', created_at: new Date(), completed: false },
-  { id: 1, value: 'add tests',      created_at: new Date(), completed: false },
+  { id: 1, value: 'add tests', created_at: new Date(), completed: false },
   { id: 2, value: 'include development environment', created_at: new Date(), completed: false },
-  { id: 3, value: 'include production environment',  created_at: new Date(), completed: false }
+  { id: 3, value: 'include production environment', created_at: new Date(), completed: false }
 ];
 
 export function createTodoApi() {
@@ -44,16 +44,16 @@ export function createTodoApi() {
   var router = Router()
 
   router.route('/todos')
-    .get(function(req, res) {
+    .get(function (req, res) {
       console.log('GET');
       // 70ms latency
-      setTimeout(function() {
+      setTimeout(function () {
         res.json(TODOS);
       }, 0);
 
     })
-    .post(function(req, res) {
-      console.log('POST', util.inspect(req.body, {colors: true}));
+    .post(function (req, res) {
+      console.log('POST', util.inspect(req.body, { colors: true }));
       var todo = req.body;
       if (todo) {
         TODOS.push({
@@ -68,7 +68,7 @@ export function createTodoApi() {
       return res.end();
     });
 
-  router.param('todo_id', function(req, res, next, todo_id) {
+  router.param('todo_id', function (req, res, next, todo_id) {
     // ensure correct prop type
     var id = Number(req.params.todo_id);
     try {
@@ -82,20 +82,20 @@ export function createTodoApi() {
   });
 
   router.route('/todos/:todo_id')
-    .get(function(req, res) {
-      console.log('GET', util.inspect(req.todo, {colors: true}));
+    .get(function (req, res) {
+      console.log('GET', util.inspect(req.todo, { colors: true }));
 
       res.json(req.todo);
     })
-    .put(function(req, res) {
-      console.log('PUT', util.inspect(req.body, {colors: true}));
+    .put(function (req, res) {
+      console.log('PUT', util.inspect(req.body, { colors: true }));
 
       var index = TODOS.indexOf(req.todo);
       var todo = TODOS[index] = req.body;
 
       res.json(todo);
     })
-    .delete(function(req, res) {
+    .delete(function (req, res) {
       console.log('DELETE', req.todo_id);
 
       var index = TODOS.indexOf(req.todo);
@@ -116,8 +116,8 @@ export function uploadJson() {
   var DIR = './uploads/';
 
   router.route('/upload')
-    .post(multer({dest: "./uploads/"}).single("uploads"), function(req, res) {
-      if(req['file'].originalname.endsWith('.json')) {
+    .post(multer({ dest: "./uploads/" }).single("uploads"), function (req, res) {
+      if (req['file'].originalname.endsWith('.json')) {
         fs.readFile(req['file'].path, 'utf8', function (err, data) {
           if (err) {
             res.status(500).send('Upload failed');
@@ -127,6 +127,63 @@ export function uploadJson() {
       } else {
         res.status(500).send('Upload must be json file');
       }
+    });
+
+  return router;
+};
+
+export function getPlacesFromGoogle() {
+
+  var https = require('https');
+
+  var router = Router();
+
+  router.param('id', function (req, res, next, id) {
+    // ensure correct prop type
+    var placeid = req.params.id;
+    try {
+      req.placeid = placeid;
+      next();
+    } catch (e) {
+      next(new Error('failed to load place'));
+    }
+  });
+
+  router.route('/places/:id')
+    .get(function (req, res) {
+      const requestUrl = "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + req.placeid
+        + "&key=AIzaSyAUwAHbIiy2wWRvKHjz2MAFuPP6C3tVPWw";
+      https.get(requestUrl, function (response) {
+        // Continuously update stream with data
+        var body = '';
+        response.on('data', function (d) {
+          body += d;
+        });
+        response.on('end', function () {
+
+          // Data reception is done, do whatever with it!
+          var parsed = JSON.parse(body);
+          res.json(parsed);
+
+        });
+      });
+    })
+
+  return router;
+};
+
+export function downloadJson() {
+
+  var router = Router()
+
+  router.route('/downloadmarkers')
+    .post(function (req, res) {
+      var markers = req.body;
+      var data = JSON.stringify(markers);
+      var mimetype = 'application/json';
+      res.setHeader('Content-Type', mimetype);
+      res.setHeader('Content-disposition', 'attachment; filename=marker.json');
+      res.send(data);
     });
 
   return router;

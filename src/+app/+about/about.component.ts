@@ -4,7 +4,7 @@ import { Component, Inject, ChangeDetectionStrategy, ViewEncapsulation } from '@
   changeDetection: ChangeDetectionStrategy.Default,
   encapsulation: ViewEncapsulation.Emulated,
   selector: 'about',
-  template: 'About component'
+  templateUrl: './about.component.html'
 })
 export class AboutComponent {
   constructor(@Inject('req') req: any) {

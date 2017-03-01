@@ -10,49 +10,70 @@
       </div>
     </div>
     <button class="btn btn-primary" (click)="upload()">Upload</button>
-    <button class="btn btn-warning" (click)="getLocation()">Get Location</button>
+    <button class="btn btn-warning" (click)="getLocation()">
+      <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> Get Location
+      </button>
+    <button class="btn btn-default" (click)="downloadmarkers()">
+      <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download markers
+    </button>
   </form>
 
   <div class="row map_area">
     <div class="col-md-6 col-xs-12">
-      <sebm-google-map [latitude]="currentLat" [longitude]="currentLong" [zoom]="initzoom" 
-        [disableDefaultUI]="false"
-        [zoomControl]="true"
+      <sebm-google-map [latitude]="centerLat" [longitude]="centerLong" [zoom]="initzoom" [disableDefaultUI]="false" [zoomControl]="true"
         (mapClick)="mapClicked($event)">
-        <sebm-google-map-marker *ngIf="positionSupported" 
-          [latitude]="currentLat"
-          [longitude]="currentLong"
-          [markerDraggable]="true"s>
+        <sebm-google-map-marker *ngIf="positionSupported" [latitude]="currentLat" [longitude]="currentLong" [markerDraggable]="false"
+          [iconUrl]="'assets/blue_icon.png'">
         </sebm-google-map-marker>
-        <sebm-google-map-marker *ngFor="let marker of markers; let i = index;" 
-          [latitude]="marker.latitude"
-          [label]="marker.label"
-          [longitude]="marker.longitude"
-          [markerDraggable]="true"
-          (markerClick)="clickedMarker(marker, i)">
+        <sebm-google-map-marker *ngFor="let marker of markers; let i = index;" [latitude]="marker.latitude" [label]="marker.label"
+          [longitude]="marker.longitude" [markerDraggable]="true" (markerClick)="clickedMarker(marker, i)" (dragEnd)="markerDragEnd(marker, $event)">
+
+          <sebm-google-map-info-window>
+            <h2>{{marker.homeTeam}}</h2>
+            <p>Latitude: {{marker.latitude}}</p>
+            <p>Longitude: {{marker.longitude}}</p>
+          </sebm-google-map-info-window>
         </sebm-google-map-marker>
       </sebm-google-map>
     </div>
-    <div *ngIf="uploadedJsonFile" class="col-md-6 col-xs-12">
-      <!--<pre>{{ uploadedJsonFile | json }}</pre>-->
+    <div *ngIf="selectedMarker" class="col-md-6 col-xs-12">
       <div class="no-padding lib-item" data-category="view">
-                <div class="lib-panel">
-                    <div class="row box-shadow">
-                        <div class="col-md-6">
-                            <img class="lib-img-show" src="http://lorempixel.com/850/850/?random=123">
-                        </div>
-                        <div class="col-md-6">
-                            <div class="lib-row lib-header">
-                                {{selectedMarker.homeTeam}}
-                                <div class="lib-header-seperator"></div>
-                            </div>
-                            <div class="lib-row lib-desc">
-                                {{selectedMarker.information}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="lib-panel">
+          <div class="row box-shadow">
+            <div class="col-md-6">
+              <img class="lib-img-show" [src]="selectedMarker.markerImage">
             </div>
+            <div class="col-md-6">
+              <div class="lib-row lib-header">
+                {{selectedMarker.homeTeam}}
+                <div class="lib-header-seperator"></div>
+              </div>
+              <div class="lib-row lib-desc">
+                {{selectedMarker.information}}
+              </div>
+              <div class="lib-row lib-desc">
+                Latitude: {{selectedMarker.latitude}}
+              </div>
+              <div class="lib-row lib-desc">
+                Longitude: {{selectedMarker.longitude}}
+              </div>
+              <div class="lib-row lib-desc google_maps" *ngIf="selectedMarker.googleMap">
+                <a [href]="selectedMarker.googleMap">
+                  <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Google Maps
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="row" *ngIf="markers.length > 0">
+    <h3>Markers list</h3>
+      <ul>
+        <li *ngFor="let marker of markers; let i = index;" class="marker_click" (click)="clickedMarker(marker, i)">
+          {{marker.homeTeam}}
+        </li>
+      </ul>
   </div>
 </div>

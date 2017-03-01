@@ -94,3 +94,12 @@ upload_form {
 .no-padding {
     padding: 0;
 }
+
+.google_maps {
+    margin-top: 50px;
+}
+
+.marker_click {
+    color: dodgerblue;
+    cursor: pointer;
+}

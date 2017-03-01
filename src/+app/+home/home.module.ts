@@ -12,7 +12,7 @@ import { AgmCoreModule } from 'angular2-google-maps/core';
     HomeRoutingModule,
     HttpModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyAjMGmvoOK4RfMPVO-52rt87CEfhR2TUaw'
+      apiKey: 'AIzaSyAUwAHbIiy2wWRvKHjz2MAFuPP6C3tVPWw'
     })
   ],
   declarations: [
