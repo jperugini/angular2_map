@@ -22,7 +22,7 @@ export class HomeComponent {
     error: string;
     uploadedJsonFile: any;
     uploadFilename: string;
-    markers: Array<any>;
+    markers: Array<marker>;
     currentLat: number;
     currentLong: number;
     centerLat: number;
@@ -61,7 +61,7 @@ export class HomeComponent {
     setPosition(position) {
         this.currentLat = position.coords.latitude;
         this.currentLong = position.coords.longitude;
-        this.centerLat = position.coords.latitude;;
+        this.centerLat = position.coords.latitude;
         this.centerLong = position.coords.longitude;
         this.initzoom = 11;
     }
@@ -73,20 +73,15 @@ export class HomeComponent {
             this.makeFileRequest("http://localhost:3000/api/upload", [], this.filesToUpload).then((result) => {
                 try {
                     this.uploadedJsonFile = JSON.parse(result.toString());
-                    if (!this.uploadedJsonFile.markers) {
-                        this.error = "JSON should have one array object markers";
-                        this.uploadedJsonFile = null;
-                    } else {
-                        this.markers = this.uploadedJsonFile.markers;
-                        this.markers.forEach((marker, i) => marker.label = i.toString());
-                        this.initzoom = 11;
-                        this.centerLat = this.markers[0].latitude;
-                        this.centerLong = this.markers[0].longitude;
-                        this.selectedMarker = this.markers[0];
-                    }
+                    this.markers = this.uploadedJsonFile;
+                    this.markers.forEach((marker, i) => marker.label = i.toString());
+                    this.initzoom = 11;
+                    this.centerLat = this.markers[0].latitude;
+                    this.centerLong = this.markers[0].longitude;
+                    this.selectedMarker = this.markers[0];
                 } catch (e) {
                     console.log(e);
-                    this.error = "JSON is not valid";
+                    this.error = "JSON is not valid JSON format for this map";
                 }
             }, (error) => {
                 this.error = error;
@@ -217,4 +212,14 @@ export class HomeComponent {
     }
 
 
+}
+
+interface marker {
+    latitude: number;
+    longitude: number;
+    label?: string;
+    homeTeam: string;
+    markerImage?: string;
+    googleMap?: string;
+    draggable?: boolean;
 }
